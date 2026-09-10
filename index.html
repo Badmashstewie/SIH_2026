@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CoalSure | Smart Governance Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    :root { --navy:#10243e; --navy-2:#183452; --ink:#1c2c3d; --muted:#708096; --line:#e5ebf1; --canvas:#f5f7fa; --gold:#c7943e; --gold-soft:#f8efdf; --green:#16835a; --green-soft:#e6f5ef; --amber:#b87518; --amber-soft:#fff3dd; --red:#c44d4d; --red-soft:#fdeaea; --white:#fff; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--canvas); font-family:'IBM Plex Sans',sans-serif; font-size:14px; }
+    button, input, select, textarea { font:inherit; }
+    button { cursor:pointer; }
+    .login-screen { min-height:100vh; display:grid; grid-template-columns:1.05fr .95fr; background:var(--navy); }
+    .login-brand { padding:10vh 9vw; color:white; position:relative; overflow:hidden; background:linear-gradient(145deg,#0e213a 20%,#183b5a 100%); }
+    .login-brand:after { content:''; position:absolute; width:500px; height:500px; right:-170px; bottom:-190px; border:1px solid rgba(199,148,62,.4); border-radius:50%; box-shadow:0 0 0 52px rgba(199,148,62,.04),0 0 0 104px rgba(199,148,62,.04); }
+    .brand-mark { width:42px; height:42px; border:1px solid rgba(255,255,255,.35); display:grid; place-items:center; color:#d9aa5a; margin-bottom:46px; }
+    .brand-mark i { width:23px;height:23px; }
+    .eyebrow { color:#d9aa5a; font-size:11px; font-weight:700; letter-spacing:1.7px; text-transform:uppercase; margin-bottom:20px; }
+    .login-brand h1 { max-width:540px; margin:0; font-family:'DM Sans',sans-serif; font-size:clamp(38px,4vw,62px); line-height:1.03; letter-spacing:-2px; font-weight:600; }
+    .login-brand p { max-width:470px; margin:28px 0 0; color:#b7c6d5; font-size:17px; line-height:1.65; }
+    .brand-points { position:absolute; bottom:58px; left:9vw; display:flex; gap:34px; color:#bdcbd7; font-size:12px; }
+    .brand-points span { display:flex; align-items:center; gap:8px; }
+    .brand-points i { width:14px; color:#d9aa5a; }
+    .login-panel { background:#fafcfd; display:grid; place-items:center; padding:40px; }
+    .login-card { width:min(430px,100%); }
+    .login-card h2 { margin:0 0 8px; font-family:'DM Sans',sans-serif; color:var(--navy); font-size:30px; }
+    .login-card > p { margin:0 0 32px; color:var(--muted); }
+    .field { margin-bottom:19px; }
+    .field label { display:block; color:#445468; font-size:12px; font-weight:600; margin-bottom:8px; }
+    .field input,.field select,.field textarea { width:100%; border:1px solid #dce4ec; background:white; border-radius:4px; padding:12px 13px; color:var(--ink); outline:none; }
+    .field input:focus,.field select:focus,.field textarea:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(199,148,62,.12); }
+    .primary-btn { border:0; border-radius:4px; background:var(--gold); color:#fff; font-weight:600; padding:13px 18px; width:100%; transition:.2s; }
+    .primary-btn:hover { background:#ae7b2b; }
+    .secure-note { display:flex; align-items:center; justify-content:center; gap:7px; color:#8492a2; font-size:11px; margin-top:20px; }
+    .secure-note i { width:13px; }
+    .app-shell { display:none; min-height:100vh; }
+    .sidebar { position:fixed; inset:0 auto 0 0; width:252px; padding:25px 15px; background:var(--navy); color:#b7c4d0; display:flex; flex-direction:column; z-index:3; }
+    .side-brand { display:flex; align-items:center; gap:12px; color:#fff; padding:0 11px 28px; border-bottom:1px solid rgba(255,255,255,.1); }
+    .side-brand .brand-mark { margin:0; width:34px; height:34px; }
+    .side-brand strong { display:block; font-family:'DM Sans'; font-size:16px; letter-spacing:.2px; }
+    .side-brand small { display:block; color:#8296aa; margin-top:2px; font-size:10px; }
+    .nav-label { font-size:10px; color:#687f95; font-weight:600; text-transform:uppercase; letter-spacing:1.4px; padding:26px 11px 9px; }
+    .nav-item { display:flex; align-items:center; gap:12px; width:100%; border:0; background:none; color:#b6c4d0; padding:11px 11px; border-radius:4px; text-align:left; margin:2px 0; font-size:13px; }
+    .nav-item i { width:17px; height:17px; stroke-width:1.8; }
+    .nav-item:hover { color:#fff; background:rgba(255,255,255,.07); }
+    .nav-item.active { color:#fff; background:#234562; box-shadow:inset 3px 0 0 var(--gold); }
+    .sidebar-footer { margin-top:auto; border-top:1px solid rgba(255,255,255,.1); padding:17px 10px 0; display:flex; align-items:center; gap:10px; }
+    .avatar { width:34px; height:34px; border-radius:50%; display:grid; place-items:center; background:#d7a957; color:#192b40; font-weight:700; font-size:12px; }
+    .sidebar-footer strong { display:block; color:white; font-size:12px; }
+    .sidebar-footer small { color:#8094a8; font-size:10px; }
+    .main { margin-left:252px; min-height:100vh; }
+    .topbar { height:77px; padding:0 38px; display:flex; align-items:center; justify-content:space-between; background:#fff; border-bottom:1px solid var(--line); }
+    .crumb { color:#8190a1; font-size:12px; }
+    .topbar-right { display:flex; align-items:center; gap:22px; }
+    .top-icon { border:0; color:#75869a; background:none; position:relative; padding:5px; }
+    .top-icon i { width:18px; }
+    .notify-dot { position:absolute; width:6px; height:6px; border-radius:50%; background:#d35757; right:2px; top:1px; border:1px solid white; }
+    .today { color:#7d8b9b; font-size:12px; border-left:1px solid var(--line); padding-left:22px; }
+    .content { padding:33px 38px 50px; max-width:1520px; }
+    .view { display:none; animation:fadeIn .24s ease; }
+    .view.active { display:block; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+    .page-heading { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:28px; }
+    .page-heading h1 { margin:0 0 7px; font-family:'DM Sans'; font-size:28px; color:var(--navy); letter-spacing:-.5px; }
+    .page-heading p { margin:0; color:var(--muted); }
+    .heading-actions { display:flex; gap:10px; }
+    .outline-btn,.small-btn { display:inline-flex; gap:8px; align-items:center; border:1px solid #d8e1e9; background:#fff; color:#4e6175; border-radius:4px; padding:10px 13px; font-size:12px; font-weight:600; }
+    .outline-btn i,.small-btn i { width:15px; }
+    .gold-btn { background:var(--gold); color:white; border-color:var(--gold); }
+    .summary-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+    .summary-card,.panel { background:#fff; border:1px solid var(--line); border-radius:5px; }
+    .summary-card { padding:20px 21px; position:relative; overflow:hidden; }
+    .summary-card:after { content:''; position:absolute; right:-15px; bottom:-28px; width:95px; height:95px; border:1px solid #edf1f4; border-radius:50%; }
+    .summary-top { display:flex; justify-content:space-between; align-items:start; color:#768799; font-size:12px; }
+    .summary-top i { width:18px; color:var(--gold); }
+    .summary-card h2 { margin:12px 0 4px; font-family:'DM Sans'; font-size:30px; color:var(--navy); }
+    .summary-card .trend { color:var(--green); font-size:11px; }
+    .summary-card .trend.down { color:var(--red); }
+    .section-title { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+    .section-title h3 { margin:0; color:var(--navy); font-family:'DM Sans'; font-size:16px; }
+    .section-title a { color:var(--gold); font-weight:600; font-size:12px; cursor:pointer; }
+    .panel { overflow:hidden; }
+    .table-wrap { overflow:auto; }
+    table { width:100%; border-collapse:collapse; min-width:650px; }
+    th { background:#fbfcfd; color:#8996a5; font-size:10px; letter-spacing:.6px; text-transform:uppercase; font-weight:600; text-align:left; padding:13px 17px; border-bottom:1px solid var(--line); }
+    td { padding:15px 17px; border-bottom:1px solid #edf1f4; color:#45576b; font-size:12px; }
+    tr:last-child td { border-bottom:0; }
+    td strong { color:var(--ink); font-weight:600; }
+    .badge { display:inline-flex; align-items:center; gap:5px; border-radius:20px; padding:5px 9px; font-size:10px; font-weight:600; white-space:nowrap; }
+    .badge:before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; }
+    .badge.green { color:var(--green); background:var(--green-soft); } .badge.amber { color:var(--amber); background:var(--amber-soft); } .badge.red { color:var(--red); background:var(--red-soft); } .badge.blue { color:#417299; background:#eaf2f8; }
+    .dashboard-lower { display:grid; grid-template-columns:1.55fr .85fr; gap:22px; margin-top:27px; }
+    .quick-panel { padding:21px; }
+    .quick-list { display:grid; gap:12px; margin-top:21px; }
+    .quick-row { display:flex; align-items:center; gap:12px; padding:12px 0; border-top:1px solid #edf1f4; }
+    .quick-icon { width:30px; height:30px; display:grid; place-items:center; color:var(--gold); background:var(--gold-soft); border-radius:4px; }
+    .quick-icon i { width:15px; }
+    .quick-row div:nth-child(2) { flex:1; } .quick-row strong { font-size:12px; color:var(--ink); display:block; } .quick-row span { font-size:10px; color:var(--muted); }
+    .map-layout { display:grid; grid-template-columns:1.55fr .75fr; gap:20px; }
+    .map-box { height:510px; border:1px solid #cfd9e1; border-radius:5px; position:relative; overflow:hidden; background-color:#e6edf0; background-image:linear-gradient(30deg,rgba(255,255,255,.52) 12%,transparent 12.5%,transparent 87%,rgba(255,255,255,.52) 87.5%,rgba(255,255,255,.52)),linear-gradient(150deg,rgba(255,255,255,.45) 12%,transparent 12.5%,transparent 87%,rgba(255,255,255,.45) 87.5%,rgba(255,255,255,.45)),linear-gradient(30deg,rgba(255,255,255,.45) 12%,transparent 12.5%,transparent 87%,rgba(255,255,255,.45) 87.5%,rgba(255,255,255,.45)); background-size:90px 155px; background-position:0 0,0 0,45px 78px; }
+    .map-box:before { content:'NATIONAL COAL OPERATIONS | LIVE RISK OVERVIEW'; position:absolute; top:19px; left:22px; color:#80929e; font-size:10px; letter-spacing:1px; font-weight:600; }
+    .pin { position:absolute; width:16px; height:16px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); border:3px solid white; box-shadow:0 2px 5px #73838a; }
+    .pin:after { content:''; position:absolute; width:4px; height:4px; border-radius:50%; background:white; top:3px; left:3px; }
+    .pin.green { background:var(--green); } .pin.yellow { background:#d59730; } .pin.red { background:var(--red); }
+    .map-scale { position:absolute; right:22px; bottom:20px; color:#7e8e99; font-size:10px; border-bottom:2px solid #82939d; width:60px; text-align:center; padding-bottom:4px; }
+    .map-legend { position:absolute; bottom:20px; left:22px; display:flex; gap:15px; background:rgba(255,255,255,.85); padding:9px 10px; border-radius:3px; font-size:10px; color:#5e7080; }
+    .legend-dot { width:7px; height:7px; border-radius:50%; display:inline-block; margin-right:4px; } .legend-dot.green { background:var(--green); }.legend-dot.yellow { background:#d59730; }.legend-dot.red { background:var(--red); }
+    .risk-list { padding:20px; }
+    .risk-list h3 { margin:0 0 18px; font:600 16px 'DM Sans'; color:var(--navy); }
+    .risk-item { padding:14px 0; border-top:1px solid #edf1f4; display:flex; align-items:center; gap:11px; }
+    .risk-bar { height:5px; background:#edf1f4; border-radius:10px; margin-top:8px; width:150px; }.risk-bar span { display:block; height:100%; border-radius:10px; }.risk-bar .high { background:var(--red); }.risk-bar .medium { background:#d59730; }.risk-bar .low { background:var(--green); }
+    .risk-item > div:nth-child(2) { flex:1; }.risk-item strong { display:block; font-size:12px; }.risk-score { font-weight:700; font-size:13px; }.risk-score.high { color:var(--red); }.risk-score.medium { color:var(--amber); }.risk-score.low { color:var(--green); }
+    .filter-row { display:flex; gap:10px; margin-bottom:18px; }.filter-row select,.filter-row input { border:1px solid #dce4ec; color:#6c7d8e; background:#fff; border-radius:4px; padding:10px 12px; font-size:12px; min-width:150px; }
+    .thumb { width:28px; height:28px; display:inline-grid; place-items:center; background:#edf2f5; color:#718395; border-radius:3px; }.thumb i { width:15px; }
+    .form-layout { display:grid; grid-template-columns:1fr 1fr; gap:20px; }.form-panel { padding:24px; }.form-panel h3 { color:var(--navy); font:600 16px 'DM Sans'; margin:0 0 20px; }.form-panel .field { margin-bottom:17px; }.form-panel textarea { min-height:123px; resize:none; }.location-input { display:flex; gap:8px; }.location-input input { flex:1; }.location-input button { border:1px solid #dce4ec; background:var(--gold-soft); color:var(--gold); width:43px; border-radius:4px; }.upload-zone { border:1px dashed #b9c7d3; min-height:145px; border-radius:4px; display:grid; place-items:center; text-align:center; color:#8b9aaa; background:#fafcfd; }.upload-zone i { width:27px; color:#c7943e; margin-bottom:7px; }.upload-zone strong { display:block; color:#607286; font-size:12px; }.upload-zone span { font-size:10px; }.form-actions { display:flex; justify-content:flex-end; gap:9px; margin-top:24px; }.form-actions .primary-btn { width:auto; padding-inline:26px; }
+    .card-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:17px; }.contractor-card { padding:20px; }.contractor-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:18px; }.contractor-avatar { width:37px; height:37px; background:#eef2f5; color:var(--navy); display:grid; place-items:center; border-radius:4px; font-weight:700; }.contractor-card h3 { font:600 15px 'DM Sans'; margin:0 0 5px; color:var(--navy); }.contractor-card .license { color:#8a98a7; font-size:10px; }.contractor-meta { display:grid; grid-template-columns:1fr 1fr; gap:15px 10px; border-top:1px solid #edf1f4; padding-top:16px; }.contractor-meta label { display:block; font-size:10px; color:#8b98a5; margin-bottom:4px; }.contractor-meta span { font-size:11px; color:#425568; font-weight:600; }
+    .alert-feed { max-width:900px; display:grid; gap:10px; }.alert-card { background:white; border:1px solid var(--line); border-left:3px solid var(--gold); padding:17px 19px; display:flex; gap:15px; align-items:center; border-radius:4px; }.alert-card.critical { border-left-color:var(--red); }.alert-card.info { border-left-color:#5285a8; }.alert-icon { width:35px; height:35px; flex:none; display:grid; place-items:center; color:var(--gold); background:var(--gold-soft); border-radius:50%; }.critical .alert-icon { color:var(--red); background:var(--red-soft); }.info .alert-icon { color:#5285a8; background:#eaf2f8; }.alert-icon i { width:17px; }.alert-body { flex:1; }.alert-body strong { font-size:13px; display:block; color:var(--ink); margin-bottom:4px; }.alert-body span { color:#8794a2; font-size:11px; }.alert-time { color:#9ba7b3; font-size:10px; }
+    .chart-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }.chart-panel { padding:22px; min-height:345px; }.chart-panel.wide { grid-column:span 2; }.chart-panel h3 { margin:0 0 4px; font:600 16px 'DM Sans'; color:var(--navy); }.chart-panel p { margin:0 0 18px; font-size:11px; color:#8a97a5; }.chart-wrap { position:relative; height:250px; }.donut-wrap { display:flex; align-items:center; justify-content:space-around; gap:18px; height:260px; }.donut-wrap canvas { max-width:220px; max-height:220px; }.chart-legend { display:grid; gap:9px; }.chart-legend span { font-size:11px; color:#68798b; }.chart-legend i { width:8px; height:8px; display:inline-block; margin-right:7px; border-radius:2px; }
+    .toast { position:fixed; right:26px; bottom:25px; background:#183b5a; color:#fff; padding:14px 17px; border-left:3px solid var(--gold); border-radius:4px; box-shadow:0 10px 30px rgba(19,42,65,.22); display:flex; gap:11px; align-items:center; transform:translateY(90px); opacity:0; pointer-events:none; transition:.28s; z-index:5; font-size:12px; }.toast.show { transform:none; opacity:1; }.toast i { color:#83d4af; width:18px; }
+    @media (max-width:1000px) { .summary-grid { grid-template-columns:repeat(2,1fr); }.dashboard-lower,.map-layout,.form-layout { grid-template-columns:1fr; }.card-grid { grid-template-columns:repeat(2,1fr); }.login-screen { grid-template-columns:1fr; }.login-brand { display:none; }.login-panel { min-height:100vh; } }
+    @media (max-width:720px) { .sidebar { width:68px; padding:20px 9px; }.side-brand { padding:0 8px 22px; }.side-brand > div:last-child,.nav-label,.nav-item span,.sidebar-footer > div { display:none; }.nav-item { justify-content:center; padding:12px 8px; }.sidebar-footer { justify-content:center; padding-left:0; }.main { margin-left:68px; }.topbar { padding:0 20px; }.today { display:none; }.content { padding:25px 18px 40px; }.page-heading { flex-direction:column; gap:16px; }.heading-actions { width:100%; }.heading-actions button { flex:1; justify-content:center; }.summary-grid,.card-grid,.chart-grid { grid-template-columns:1fr; }.chart-panel.wide { grid-column:span 1; }.filter-row { overflow:auto; }.map-box { height:390px; } }
+  </style>
+</head>
+<body>
+  <section class="login-screen" id="loginScreen">
+    <div class="login-brand">
+      <div class="brand-mark"><i data-lucide="mountain"></i></div>
+      <div class="eyebrow">Ministry of Coal · Digital Governance</div>
+      <h1>Smart governance for safer mines.</h1>
+      <p>One operational view for compliance, inspections, contractor oversight and risk intelligence across India's coal mining ecosystem.</p>
+      <div class="brand-points"><span><i data-lucide="shield-check"></i> Compliance-led</span><span><i data-lucide="scan-line"></i> Field-ready</span><span><i data-lucide="bar-chart-3"></i> Intelligence-backed</span></div>
+    </div>
+    <div class="login-panel">
+      <form class="login-card" id="loginForm">
+        <div class="eyebrow">Authorized access</div>
+        <h2>Welcome back</h2>
+        <p>Sign in to the CoalSure governance console.</p>
+        <div class="field"><label for="email">Official email</label><input id="email" type="email" placeholder="name@coal.gov.in" /></div>
+        <div class="field"><label for="password">Password</label><input id="password" type="password" placeholder="Enter password" /></div>
+        <div class="field"><label for="role">Access role</label><select id="role"><option>Field Officer</option><option>Mine Official</option><option>Corporate Admin</option><option>Regulator</option></select></div>
+        <button class="primary-btn" type="submit">Login to platform <span aria-hidden="true">→</span></button>
+        <div class="secure-note"><i data-lucide="lock-keyhole"></i> Secure government network · Prototype environment</div>
+      </form>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell">
+    <aside class="sidebar">
+      <div class="side-brand"><div class="brand-mark"><i data-lucide="mountain"></i></div><div><strong>CoalSure</strong><small>Governance console</small></div></div>
+      <nav>
+        <div class="nav-label">Overview</div>
+        <button class="nav-item active" data-view="dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></button>
+        <button class="nav-item" data-view="risk-map"><i data-lucide="map"></i><span>Mine Risk Map</span></button>
+        <button class="nav-item" data-view="inspections"><i data-lucide="clipboard-check"></i><span>Inspection Log</span></button>
+        <div class="nav-label">Operations</div>
+        <button class="nav-item" data-view="new-inspection"><i data-lucide="file-plus-2"></i><span>New Inspection</span></button>
+        <button class="nav-item" data-view="compliance"><i data-lucide="list-checks"></i><span>Compliance Tracker</span></button>
+        <button class="nav-item" data-view="contractors"><i data-lucide="hard-hat"></i><span>Contractor Management</span></button>
+        <div class="nav-label">Intelligence</div>
+        <button class="nav-item" data-view="alerts"><i data-lucide="bell-ring"></i><span>Alerts & Notifications</span></button>
+        <button class="nav-item" data-view="insights"><i data-lucide="sparkles"></i><span>AI Risk Insights</span></button>
+      </nav>
+      <div class="sidebar-footer"><div class="avatar">AM</div><div><strong>Arjun Mehta</strong><small>Field Officer</small></div><i data-lucide="more-horizontal" style="width:17px;margin-left:auto"></i></div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><div class="crumb">CoalSure <span>/</span> <strong id="crumbTitle">Dashboard</strong></div><div class="topbar-right"><button class="top-icon"><i data-lucide="search"></i></button><button class="top-icon"><i data-lucide="bell"></i><span class="notify-dot"></span></button><div class="today">Friday, 11 September 2026</div></div></header>
+      <div class="content">
+        <section class="view active" id="dashboard">
+          <div class="page-heading"><div><h1>Good morning, Arjun</h1><p>Here is the current operating picture across your assigned coal mines.</p></div><div class="heading-actions"><button class="outline-btn"><i data-lucide="download"></i> Export report</button><button class="outline-btn gold-btn" data-jump="new-inspection"><i data-lucide="plus"></i> New inspection</button></div></div>
+          <div class="summary-grid"><div class="summary-card"><div class="summary-top">Total Mines <i data-lucide="mountain"></i></div><h2>24</h2><span class="trend">↑ 2 added this quarter</span></div><div class="summary-card"><div class="summary-top">Open Violations <i data-lucide="triangle-alert"></i></div><h2>38</h2><span class="trend down">↓ 12% from last month</span></div><div class="summary-card"><div class="summary-top">Pending Deadlines <i data-lucide="calendar-clock"></i></div><h2>17</h2><span class="trend down">↑ 4 due this week</span></div><div class="summary-card"><div class="summary-top">High-Risk Mines <i data-lucide="shield-alert"></i></div><h2>05</h2><span class="trend down">↑ 1 since last review</span></div></div>
+          <div class="section-title"><h3>Recent inspections</h3><a data-jump="inspections">View inspection log →</a></div>
+          <div class="panel table-wrap"><table><thead><tr><th>Mine</th><th>Date</th><th>Inspector</th><th>Category</th><th>Status</th></tr></thead><tbody><tr><td><strong>Gevra OC Mine</strong></td><td>10 Sep 2026</td><td>Arjun Mehta</td><td>Safety</td><td><span class="badge green">Compliant</span></td></tr><tr><td><strong>Dipka Area Mine</strong></td><td>09 Sep 2026</td><td>Meera Nair</td><td>Environment</td><td><span class="badge amber">Action required</span></td></tr><tr><td><strong>Korba Coalfields</strong></td><td>08 Sep 2026</td><td>R. Prakash</td><td>Production</td><td><span class="badge green">Compliant</span></td></tr><tr><td><strong>Manuguru OC-II</strong></td><td>07 Sep 2026</td><td>Arjun Mehta</td><td>Labour</td><td><span class="badge red">Critical finding</span></td></tr></tbody></table></div>
+          <div class="dashboard-lower"><div><div class="section-title"><h3>Upcoming compliance deadlines</h3><a data-jump="compliance">Open tracker →</a></div><div class="panel table-wrap"><table><thead><tr><th>Requirement</th><th>Mine</th><th>Due date</th><th>Status</th></tr></thead><tbody><tr><td><strong>Annual DGMS safety return</strong></td><td>Gevra OC</td><td>14 Sep 2026</td><td><span class="badge amber">Due soon</span></td></tr><tr><td><strong>Water quality monitoring</strong></td><td>Dipka Area</td><td>18 Sep 2026</td><td><span class="badge blue">Upcoming</span></td></tr><tr><td><strong>Explosive license renewal</strong></td><td>Manuguru</td><td>21 Sep 2026</td><td><span class="badge blue">Upcoming</span></td></tr></tbody></table></div></div><div><div class="section-title"><h3>Attention needed</h3><a data-jump="alerts">All alerts →</a></div><div class="panel quick-panel"><div class="quick-list"><div class="quick-row"><div class="quick-icon"><i data-lucide="file-warning"></i></div><div><strong>5 high-risk mines</strong><span>Require review this week</span></div><i data-lucide="chevron-right" style="width:15px;color:#aab5c0"></i></div><div class="quick-row"><div class="quick-icon"><i data-lucide="user-round-cog"></i></div><div><strong>3 contractor licenses</strong><span>Expiring within 30 days</span></div><i data-lucide="chevron-right" style="width:15px;color:#aab5c0"></i></div><div class="quick-row"><div class="quick-icon"><i data-lucide="message-square-warning"></i></div><div><strong>12 new observations</strong><span>Awaiting assignment</span></div><i data-lucide="chevron-right" style="width:15px;color:#aab5c0"></i></div></div></div></div></div>
+        </section>
+
+        <section class="view" id="risk-map"><div class="page-heading"><div><h1>Mine risk map</h1><p>Geospatial view of operational risk across monitored mine sites.</p></div><div class="heading-actions"><button class="outline-btn"><i data-lucide="layers"></i> Map layers</button><button class="outline-btn"><i data-lucide="refresh-cw"></i> Refresh</button></div></div><div class="map-layout"><div class="map-box"><span class="pin green" style="left:19%;top:61%"></span><span class="pin yellow" style="left:33%;top:39%"></span><span class="pin red" style="left:45%;top:51%"></span><span class="pin green" style="left:52%;top:70%"></span><span class="pin yellow" style="left:64%;top:35%"></span><span class="pin red" style="left:72%;top:59%"></span><span class="pin green" style="left:79%;top:28%"></span><span class="pin green" style="left:26%;top:23%"></span><div class="map-legend"><span><i class="legend-dot green"></i>Low</span><span><i class="legend-dot yellow"></i>Moderate</span><span><i class="legend-dot red"></i>High</span></div><div class="map-scale">50 km</div></div><div class="panel risk-list"><h3>Risk-ranked mines</h3><div class="risk-item"><div class="avatar" style="background:#fdeaea;color:#c44d4d">01</div><div><strong>Manuguru OC-II</strong><div class="risk-bar"><span class="high" style="width:92%"></span></div></div><span class="risk-score high">92</span></div><div class="risk-item"><div class="avatar" style="background:#fdeaea;color:#c44d4d">02</div><div><strong>Dipka Area Mine</strong><div class="risk-bar"><span class="high" style="width:84%"></span></div></div><span class="risk-score high">84</span></div><div class="risk-item"><div class="avatar" style="background:#fff3dd;color:#b87518">03</div><div><strong>Chirimiri UG</strong><div class="risk-bar"><span class="medium" style="width:68%"></span></div></div><span class="risk-score medium">68</span></div><div class="risk-item"><div class="avatar" style="background:#fff3dd;color:#b87518">04</div><div><strong>Korba Coalfields</strong><div class="risk-bar"><span class="medium" style="width:56%"></span></div></div><span class="risk-score medium">56</span></div><div class="risk-item"><div class="avatar" style="background:#e6f5ef;color:#16835a">05</div><div><strong>Gevra OC Mine</strong><div class="risk-bar"><span class="low" style="width:31%"></span></div></div><span class="risk-score low">31</span></div></div></div></section>
+
+        <section class="view" id="inspections"><div class="page-heading"><div><h1>Inspection log</h1><p>Review field observations and outcomes from recent inspections.</p></div><button class="outline-btn gold-btn" data-jump="new-inspection"><i data-lucide="plus"></i> New inspection</button></div><div class="filter-row"><select><option>All mines</option><option>Gevra OC Mine</option><option>Dipka Area Mine</option></select><select><option>All categories</option><option>Safety</option><option>Environment</option><option>Production</option><option>Labour</option></select><select><option>All statuses</option><option>Compliant</option><option>Action required</option></select><input type="text" placeholder="Search inspections" /></div><div class="panel table-wrap"><table><thead><tr><th>Inspection ID</th><th>Mine</th><th>Date</th><th>Category</th><th>Inspector</th><th>Status</th><th>Evidence</th></tr></thead><tbody><tr><td><strong>INSP-2026-0910</strong></td><td>Gevra OC Mine</td><td>10 Sep 2026</td><td>Safety</td><td>Arjun Mehta</td><td><span class="badge green">Compliant</span></td><td><button class="thumb"><i data-lucide="image"></i></button></td></tr><tr><td><strong>INSP-2026-0909</strong></td><td>Dipka Area Mine</td><td>09 Sep 2026</td><td>Environment</td><td>Meera Nair</td><td><span class="badge amber">Action required</span></td><td><button class="thumb"><i data-lucide="image"></i></button></td></tr><tr><td><strong>INSP-2026-0908</strong></td><td>Korba Coalfields</td><td>08 Sep 2026</td><td>Production</td><td>R. Prakash</td><td><span class="badge green">Compliant</span></td><td><button class="thumb"><i data-lucide="image"></i></button></td></tr><tr><td><strong>INSP-2026-0907</strong></td><td>Manuguru OC-II</td><td>07 Sep 2026</td><td>Labour</td><td>Arjun Mehta</td><td><span class="badge red">Critical finding</span></td><td><button class="thumb"><i data-lucide="image"></i></button></td></tr><tr><td><strong>INSP-2026-0905</strong></td><td>Chirimiri UG</td><td>05 Sep 2026</td><td>Safety</td><td>S. Kulkarni</td><td><span class="badge amber">Action required</span></td><td><button class="thumb"><i data-lucide="image"></i></button></td></tr></tbody></table></div></section>
+
+        <section class="view" id="new-inspection"><div class="page-heading"><div><h1>New inspection</h1><p>Capture a field observation and route it for compliance review.</p></div><span class="badge blue">Draft inspection</span></div><div class="form-layout"><div class="panel form-panel"><h3>Inspection details</h3><div class="field"><label>Mine site</label><select><option>Select mine site</option><option>Gevra OC Mine</option><option>Dipka Area Mine</option><option>Manuguru OC-II</option><option>Korba Coalfields</option></select></div><div class="field"><label>Inspection category</label><select><option>Select category</option><option>Safety</option><option>Environment</option><option>Production</option><option>Labour</option></select></div><div class="field"><label>GPS location</label><div class="location-input"><input value="22.3596° N, 82.6871° E" /><button title="Use current location"><i data-lucide="crosshair"></i></button></div></div><div class="field"><label>Field notes</label><textarea placeholder="Record observations, conditions and recommended action..."></textarea></div><div class="form-actions"><button class="outline-btn">Save draft</button><button class="primary-btn" id="submitInspection" type="button">Submit inspection <i data-lucide="arrow-up-right"></i></button></div></div><div class="panel form-panel"><h3>Photo evidence</h3><div class="upload-zone"><div><i data-lucide="camera"></i><strong>Drop inspection photos here</strong><span>or browse from device · JPG, PNG up to 10 MB</span></div></div><div style="margin-top:28px;padding:16px;background:#f8fafb;border:1px solid #edf1f4;border-radius:4px"><div style="display:flex;gap:9px;align-items:flex-start"><i data-lucide="info" style="width:16px;color:#c7943e;flex:none"></i><div><strong style="font-size:12px;color:#43566a;display:block;margin-bottom:5px">Field capture guidance</strong><span style="font-size:11px;color:#8492a0;line-height:1.6">Attach clear evidence for any observation marked Action required or Critical finding.</span></div></div></div></div></div></section>
+
+        <section class="view" id="compliance"><div class="page-heading"><div><h1>Compliance tracker</h1><p>Track regulatory obligations, due dates and accountable officers.</p></div><button class="outline-btn"><i data-lucide="download"></i> Export register</button></div><div class="panel table-wrap"><table><thead><tr><th>Regulation / requirement</th><th>Applicable mine</th><th>Due date</th><th>Status</th><th>Responsible officer</th></tr></thead><tbody><tr><td><strong>Annual DGMS safety return</strong><br><span style="font-size:10px;color:#909ca8">DGMS · Form 2</span></td><td>Gevra OC Mine</td><td>14 Sep 2026</td><td><span class="badge amber">Upcoming</span></td><td>Arjun Mehta</td></tr><tr><td><strong>Water quality monitoring report</strong><br><span style="font-size:10px;color:#909ca8">Environment Protection Rules</span></td><td>Dipka Area Mine</td><td>02 Sep 2026</td><td><span class="badge red">Overdue</span></td><td>Meera Nair</td></tr><tr><td><strong>Explosive license renewal</strong><br><span style="font-size:10px;color:#909ca8">Coal Mines Regulations</span></td><td>Manuguru OC-II</td><td>21 Sep 2026</td><td><span class="badge amber">Upcoming</span></td><td>V. Ramesh</td></tr><tr><td><strong>Annual medical examination register</strong><br><span style="font-size:10px;color:#909ca8">Mines Rules, 1955</span></td><td>Korba Coalfields</td><td>30 Aug 2026</td><td><span class="badge green">Completed</span></td><td>R. Prakash</td></tr><tr><td><strong>Mine closure plan review</strong><br><span style="font-size:10px;color:#909ca8">MCDR, 2017</span></td><td>Chirimiri UG</td><td>28 Sep 2026</td><td><span class="badge blue">Upcoming</span></td><td>S. Kulkarni</td></tr></tbody></table></div></section>
+
+        <section class="view" id="contractors"><div class="page-heading"><div><h1>Contractor management</h1><p>Monitor contractor credentials, assignments and compliance standing.</p></div><button class="outline-btn gold-btn"><i data-lucide="user-plus"></i> Add contractor</button></div><div class="card-grid"><div class="panel contractor-card"><div class="contractor-head"><div style="display:flex;gap:11px"><div class="contractor-avatar">AS</div><div><h3>Arka Services Pvt. Ltd.</h3><span class="license">LIC · CMR-2048-119</span></div></div><span class="badge green">Compliant</span></div><div class="contractor-meta"><div><label>License expiry</label><span>18 Apr 2027</span></div><div><label>Assigned mine</label><span>Gevra OC Mine</span></div></div></div><div class="panel contractor-card"><div class="contractor-head"><div style="display:flex;gap:11px"><div class="contractor-avatar">BM</div><div><h3>Bharat Mining Works</h3><span class="license">LIC · CMR-2031-582</span></div></div><span class="badge amber">Review due</span></div><div class="contractor-meta"><div><label>License expiry</label><span>14 Sep 2026</span></div><div><label>Assigned mine</label><span>Dipka Area Mine</span></div></div></div><div class="panel contractor-card"><div class="contractor-head"><div style="display:flex;gap:11px"><div class="contractor-avatar">CP</div><div><h3>Central Plant Services</h3><span class="license">LIC · CMR-2028-334</span></div></div><span class="badge green">Compliant</span></div><div class="contractor-meta"><div><label>License expiry</label><span>08 Jan 2027</span></div><div><label>Assigned mine</label><span>Korba Coalfields</span></div></div></div><div class="panel contractor-card"><div class="contractor-head"><div style="display:flex;gap:11px"><div class="contractor-avatar">DS</div><div><h3>Delta Site Solutions</h3><span class="license">LIC · CMR-2019-741</span></div></div><span class="badge red">Expired</span></div><div class="contractor-meta"><div><label>License expiry</label><span>29 Aug 2026</span></div><div><label>Assigned mine</label><span>Manuguru OC-II</span></div></div></div><div class="panel contractor-card"><div class="contractor-head"><div style="display:flex;gap:11px"><div class="contractor-avatar">EM</div><div><h3>Eastern Mine Logistics</h3><span class="license">LIC · CMR-2036-286</span></div></div><span class="badge green">Compliant</span></div><div class="contractor-meta"><div><label>License expiry</label><span>12 Jun 2027</span></div><div><label>Assigned mine</label><span>Chirimiri UG</span></div></div></div></div></section>
+
+        <section class="view" id="alerts"><div class="page-heading"><div><h1>Alerts & notifications</h1><p>Keep up with events that need attention across the network.</p></div><button class="outline-btn"><i data-lucide="check-check"></i> Mark all read</button></div><div class="alert-feed"><div class="alert-card"><div class="alert-icon"><i data-lucide="calendar-clock"></i></div><div class="alert-body"><strong>License expiring in 3 days — Bharat Mining Works</strong><span>Contractor Management · Action recommended before 14 Sep 2026</span></div><div class="alert-time">18 min ago</div></div><div class="alert-card critical"><div class="alert-icon"><i data-lucide="triangle-alert"></i></div><div class="alert-body"><strong>New high-severity violation logged at Manuguru OC-II</strong><span>Inspection INSP-2026-0907 · Labour category · Assigned to Arjun Mehta</span></div><div class="alert-time">1 hr ago</div></div><div class="alert-card info"><div class="alert-icon"><i data-lucide="clipboard-check"></i></div><div class="alert-body"><strong>Inspection report ready for review — Dipka Area Mine</strong><span>Environment category · Submitted by Meera Nair</span></div><div class="alert-time">3 hrs ago</div></div><div class="alert-card"><div class="alert-icon"><i data-lucide="clock-3"></i></div><div class="alert-body"><strong>Compliance deadline approaching — Gevra OC Mine</strong><span>Annual DGMS safety return due in 3 days</span></div><div class="alert-time">Yesterday</div></div><div class="alert-card info"><div class="alert-icon"><i data-lucide="user-round-check"></i></div><div class="alert-body"><strong>Contractor profile updated — Eastern Mine Logistics</strong><span>License documents and safety training records verified</span></div><div class="alert-time">Yesterday</div></div></div></section>
+
+        <section class="view" id="insights"><div class="page-heading"><div><h1>AI risk insights</h1><p>Pattern-led signals to help prioritize inspections and interventions.</p></div><span class="badge blue"><i data-lucide="sparkles" style="width:12px"></i> Model refreshed 2 hrs ago</span></div><div class="chart-grid"><div class="panel chart-panel"><h3>Violations by category</h3><p>Open observations across all monitored mines</p><div class="donut-wrap"><canvas id="categoryChart"></canvas><div class="chart-legend"><span><i style="background:#c44d4d"></i>Safety · 42%</span><span><i style="background:#d59730"></i>Environment · 26%</span><span><i style="background:#5d86a2"></i>Production · 19%</span><span><i style="background:#8b9eac"></i>Labour · 13%</span></div></div></div><div class="panel chart-panel"><h3>Top 5 high-risk mines</h3><p>Composite risk score, current period</p><div class="chart-wrap"><canvas id="riskChart"></canvas></div></div><div class="panel chart-panel wide"><h3>Risk trend</h3><p>Network-wide average risk score over the last six months</p><div class="chart-wrap"><canvas id="trendChart"></canvas></div></div></div></section>
+      </div>
+    </main>
+  </div>
+  <div class="toast" id="toast"><i data-lucide="check-circle-2"></i><span>Inspection submitted successfully. Review queue updated.</span></div>
+  <script>
+    lucide.createIcons();
+    const loginScreen = document.getElementById('loginScreen');
+    const appShell = document.getElementById('appShell');
+    const crumbTitle = document.getElementById('crumbTitle');
+    const titles = { dashboard:'Dashboard', 'risk-map':'Mine Risk Map', inspections:'Inspection Log', 'new-inspection':'New Inspection', compliance:'Compliance Tracker', contractors:'Contractor Management', alerts:'Alerts & Notifications', insights:'AI Risk Insights' };
+    function showView(viewId) {
+      document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.id === viewId));
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.view === viewId));
+      crumbTitle.textContent = titles[viewId] || 'Dashboard';
+      window.scrollTo({ top:0, behavior:'smooth' });
+      if (viewId === 'insights') renderCharts();
+    }
+    document.getElementById('loginForm').addEventListener('submit', event => { event.preventDefault(); loginScreen.style.display='none'; appShell.style.display='block'; });
+    document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', () => showView(item.dataset.view)));
+    document.querySelectorAll('[data-jump]').forEach(item => item.addEventListener('click', () => showView(item.dataset.jump)));
+    document.getElementById('submitInspection').addEventListener('click', () => { const toast = document.getElementById('toast'); toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3400); });
+    let chartsReady = false;
+    function renderCharts() {
+      if (chartsReady || typeof Chart === 'undefined') return;
+      chartsReady = true;
+      new Chart(document.getElementById('categoryChart'), { type:'doughnut', data:{ labels:['Safety','Environment','Production','Labour'], datasets:[{ data:[42,26,19,13], backgroundColor:['#c44d4d','#d59730','#5d86a2','#8b9eac'], borderWidth:0 }] }, options:{ cutout:'72%', plugins:{ legend:{display:false}, tooltip:{enabled:true} }, responsive:true, maintainAspectRatio:false } });
+      new Chart(document.getElementById('riskChart'), { type:'bar', data:{ labels:['Manuguru','Dipka','Chirimiri','Korba','Gevra'], datasets:[{ data:[92,84,68,56,31], backgroundColor:['#c44d4d','#d36b55','#d59730','#d9af62','#4d9a79'], borderRadius:3, barThickness:18 }] }, options:{ indexAxis:'y', plugins:{legend:{display:false}}, scales:{ x:{beginAtZero:true,max:100,grid:{color:'#edf1f4'},ticks:{color:'#8b98a5',font:{size:10}}}, y:{grid:{display:false},ticks:{color:'#5e7080',font:{size:11}}} }, responsive:true, maintainAspectRatio:false } });
+      new Chart(document.getElementById('trendChart'), { type:'line', data:{ labels:['Apr','May','Jun','Jul','Aug','Sep'], datasets:[{ data:[48,44,51,43,39,34], borderColor:'#c7943e', backgroundColor:'rgba(199,148,62,.1)', fill:true, tension:.35, pointRadius:3, pointBackgroundColor:'#c7943e', borderWidth:2 }] }, options:{ plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false},ticks:{color:'#8b98a5',font:{size:10}}}, y:{min:20,max:60,grid:{color:'#edf1f4'},ticks:{color:'#8b98a5',font:{size:10}}} }, responsive:true, maintainAspectRatio:false } });
+    }
+  </script>
+</body>
+</html>
