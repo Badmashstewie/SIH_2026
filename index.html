@@ -221,5 +221,10 @@
       new Chart(document.getElementById('trendChart'), { type:'line', data:{ labels:['Apr','May','Jun','Jul','Aug','Sep'], datasets:[{ data:[48,44,51,43,39,34], borderColor:'#c7943e', backgroundColor:'rgba(199,148,62,.1)', fill:true, tension:.35, pointRadius:3, pointBackgroundColor:'#c7943e', borderWidth:2 }] }, options:{ plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false},ticks:{color:'#8b98a5',font:{size:10}}}, y:{min:20,max:60,grid:{color:'#edf1f4'},ticks:{color:'#8b98a5',font:{size:10}}} }, responsive:true, maintainAspectRatio:false } });
     }
   </script>
+
+  <!-- AI chat widget -->
+  <link rel="stylesheet" href="/public/chatbot.css" />
+  <script src="/public/config.js"></script>
+  <script src="/public/chatbot.js"></script>
 </body>
 </html>

@@ -1,0 +1,12 @@
+{
+  "name": "coalsure",
+  "private": true,
+  "version": "1.0.0",
+  "description": "CoalSure prototype site with an AI support chat widget backed by a Netlify Function.",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.68.0"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^3.1.0"
+  }
+}
