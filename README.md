@@ -2,7 +2,7 @@
 
 > Smart governance for safer mines.
 
-CoalSure is a single-page HTML prototype for digital governance across India's coal-mining ecosystem. It provides a unified operational view for compliance, inspections, contractor oversight, alerts, and mine-risk intelligence.
+CoalSure is a prototype for digital governance across coal-mining ecosystem. It provides a unified operational view for compliance, inspections, contractor oversight, alerts, and mine-risk intelligence.
 
 ## Features
 
